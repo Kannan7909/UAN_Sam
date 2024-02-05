@@ -1,0 +1,107 @@
+<div class="oj-panel oj-flex  oj-sm-align-items-center" style="margin: 10px;">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        Partner Profile
+    </h6>
+</div>
+
+<div class="oj-panel">
+    <oj-tab-bar selection="{{selectedItem}}" data="[[tabDataProvider]]" edge="top" display="all" style="border-bottom: 1px solid rgb(6 102 132);">
+        <template slot="itemTemplate" data-oj-as="item">
+            <li>
+                <a href="#">
+                    <oj-bind-text value="[[item.data.name]]"></oj-bind-text>
+                </a>
+            </li>
+        </template>
+    </oj-tab-bar>
+    <div class="demo-switcher-container" tabindex="0" style="margin: 50px;">
+        <oj-switcher value="[[selectedItem]]">
+            <div slot="details" id="home-tab-panel" role="tabpanel" aria-labelledby="home-tab">
+                <div class="demo-tab-content">
+                    <div class="oj-panel" style="padding: 30px;">
+                        <oj-validation-group id="formValidation" class="form-container" role="group">
+                            <oj-form-layout id="personal-information" class="form" direction="row" max-columns="3" style="width: 100%;">
+                                <oj-input-text id="companyName" label-hint="Company Name" required="true" value="{{companyName}}"></oj-input-text>
+                                <oj-input-text id="companyWebsite" label-hint="Company Website" value="{{companyWebsite}}"></oj-input-text>
+                                <oj-input-text id="directorFirstName" label-hint="Director's First Name" required="true" value="{{directorFirstName}}"></oj-input-text>
+                                <oj-input-text id="directorLastName" label-hint="Director's Last Name" required="true" value="{{directorLastName}}"></oj-input-text>
+                                
+                                <div>
+                                    <oj-input-text id="directorEmail" label-hint="Director's Email" required="true" value="{{directorEmail}}" on-value-changed="[[emailPatternValidator]]"></oj-input-text>
+                                    <div class="oj-text-color-danger"><oj-bind-text value='[[directorEmailError]]'></oj-bind-text></div></br>
+                                </div>
+                                <div class="oj-flex">
+                                    <div class="oj-flex-item oj-sm-5 oj-sm-padding-2x-end oj-md-padding-3x-end">
+                                        <oj-select-single id="nearestOffice" label-hint="Country Code" label-edge="inside"
+                                            data="[[countryCodes]]" value="{{countryCode}}"></oj-select-single>
+                                    </div>
+                                    <div class="oj-flex-item oj-sm-7 oj-sm-padding-2x-start oj-md-padding-3x-start">
+                                        <oj-input-text id="directorContactNumber" label-hint="Director's Contact Number" value="{{directorContactNumber}}" on-value-changed="[[phoneValidator]]"></oj-input-text>
+                                    </div>
+                                    <div class="oj-text-color-danger"><oj-bind-text value='[[directorContactNumberError]]'></oj-bind-text></div></br>
+                                </div>
+                                <oj-input-text id="postalAddress" label-hint="Postal Address" value="{{postalAddress}}"></oj-input-text>
+                                <oj-input-text id="city" label-hint="City" value="{{city}}"></oj-input-text>
+                                <oj-select-single required id="country" label-hint="Country" label-edge="inside"
+                                    data="[[countrySet]]" value="{{country}}"></oj-select-single>
+                                <oj-select-single required id="bdm" label-hint="BDM" label-edge="inside"
+                                    data="[[bdmCounselorList]]" value="{{bdm}}"></oj-select-single>
+                                <oj-select-single required id="processingOffice" label-hint="Processing Office" label-edge="inside"
+                                    data="[[officesList]]" value="{{processingOffice}}" on-oj-value-action="[[officeChangeHandler]]"></oj-select-single>
+                                <oj-select-single required id="consultantAssigned" label-hint="Consultant Assigned" label-edge="inside"
+                                    data="[[counselorList]]" value="{{consultantAssigned}}"></oj-select-single>
+                                <oj-select-single required id="contractDone" label-hint="Contract Done By" label-edge="inside"
+                                    data="[[bdmCounselorList]]" value="{{contractDone}}"></oj-select-single>
+                            </oj-form-layout>
+                        </oj-validation-group>
+                        <div class=" oj-flex oj-sm-justify-content-center">
+                            <oj-button id="save" chroming="outlined" on-oj-action="[[formUpdate]]">Update</oj-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div slot="applications" id="blogs-tab-panel" role="tabpanel" aria-labelledby="blogs-tab">
+                <div class="demo-tab-content">
+                    <div class="oj-panel">
+                        
+                    </div>
+                </div>
+            </div>
+            <div slot="finalChoice" id="settings-tab-panel" role="tabpanel" aria-labelledby="settings-tab">
+                <div class="demo-tab-content">
+                    <div class="oj-panel">
+                        
+                    </div>
+                </div>
+            </div>
+            <div slot="contractFiles" id="contact-tab-panel" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="demo-tab-content">
+                    
+                </div>
+            </div>
+            <div slot="commissionRate" id="contact-tab-panel" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="demo-tab-content">
+                    <div class="oj-panel">
+                        
+                    </div>
+                </div>
+            </div>
+            <div slot="logs" id="contact-tab-panel" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="demo-tab-content">
+                    <div class="oj-panel">
+                        
+                    </div>
+                </div>
+            </div>
+        </oj-switcher>
+    </div>
+</div>
+
+<oj-popup id="progress" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
