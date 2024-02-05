@@ -1,7 +1,7 @@
 define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovider", "ojs/ojlistdataproviderview","ojs/ojdataprovider", 
     "ojs/ojconverterutils-i18n",
     "ojs/ojbutton", "ojs/ojtable", "ojs/ojinputtext", "ojs/ojselectsingle", "ojs/ojdialog", "ojs/ojvalidationgroup", "ojs/ojformlayout", 
-    "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojselectcombobox", "ojs/ojdatetimepicker", "ojs/ojinputnumber", "ojs/ojswitcher"], 
+    "ojs/ojinputtext", "ojs/ojprogress-circle", "ojs/ojselectcombobox", "ojs/ojdatetimepicker", "ojs/ojinputnumber", "ojs/ojswitcher","ojs/ojradioset"], 
     function (oj,ko,$, app, ArrayDataProvider, ListDataProviderView, ojdataprovider_1, ojconverterutils_i18n_1) {
 
         class PartnerProfile {
@@ -559,6 +559,31 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 });
 
                 self.offices = ko.observableArray([]);
+
+                const currentDate = new Date();
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+                const day = currentDate.getDate();
+                self.applicationFromValue = ko.observable(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIsoDateString(new Date(year, 0, 1)));
+                self.applicationToValue = ko.observable(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIsoDateString(new Date(year, month,day)));
+                self.selectApplicationRadio = ko.observable("ASD");                
+                self.applicationOffice = ko.observable();
+                self.finalChoiceOffice = ko.observable()
+
+
+                self.finalChoiceFromValue = ko.observable(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIsoDateString(new Date(year, 0, 1)));
+                self.finalChoiceToValue = ko.observable(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIsoDateString(new Date(year, month,day)));                
+                self.selectFinalChoiceRadio = ko.observable("ASD");
+
+                self.finalChoiceTotalCount = ko.observable();
+                self.finalChoicePgCount = ko.observable();
+                self.finalChoiceUgCount = ko.observable();
+                self.finalChoicePathwayCount = ko.observable();
+                self.finalChoiceYear2Count = ko.observable();
+                self.finalChoiceYear3Count = ko.observable();
+                self.finalChoicePresessionCount = ko.observable();
+                self.finalChoiceOtherCount = ko.observable();
+                
                 self.getOffices = ()=>{
                     return new Promise((resolve, reject) => {
                         self.offices([])
