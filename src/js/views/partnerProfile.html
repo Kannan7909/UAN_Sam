@@ -3,6 +3,15 @@
         Partner Profile
     </h6>
 </div>
+<div class="oj-flex oj-sm-justify-content-center oj-sm-align-items-center" style="margin: 30px;">
+    <oj-select-many id="select1" value="{{partner}}" label-edge="inside" label-hint="Partner"
+    class="oj-form-control-max-width-md" style="width: 300px;padding-right: 20px;">
+    </oj-select-many> 
+    <oj-button id="button1"  >
+        <i class="fa-solid fa-eye"></i>
+        Show
+    </oj-button>
+</div>
 
 <div class="oj-panel">
     <oj-tab-bar selection="{{selectedItem}}" data="[[tabDataProvider]]" edge="top" display="all" style="border-bottom: 1px solid rgb(6 102 132);">

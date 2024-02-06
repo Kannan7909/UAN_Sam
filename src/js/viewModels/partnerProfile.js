@@ -584,6 +584,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.finalChoicePresessionCount = ko.observable();
                 self.finalChoiceOtherCount = ko.observable();
                 
+                self.partner = ko.observable();
+
                 self.getOffices = ()=>{
                     return new Promise((resolve, reject) => {
                         self.offices([])
