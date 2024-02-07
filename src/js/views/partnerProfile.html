@@ -4,10 +4,10 @@
     </h6>
 </div>
 <div class="oj-flex oj-sm-justify-content-center oj-sm-align-items-center" style="margin: 30px;">
-    <oj-select-many id="select1" value="{{partner}}" label-edge="inside" label-hint="Partner"
+    <oj-select-single id="select1" value="{{partnerId}}" label-edge="inside" label-hint="Partner" data="[[partnersList]]"
     class="oj-form-control-max-width-md" style="width: 300px;padding-right: 20px;">
-    </oj-select-many> 
-    <oj-button id="button1"  >
+    </oj-select-single> 
+    <oj-button id="button1" on-oj-action="[[parnerInfoGet]]">
         <i class="fa-solid fa-eye"></i>
         Show
     </oj-button>
@@ -80,9 +80,9 @@
                                 <oj-input-date id="applicationTo" label-hint="To Date" value="{{applicationToValue}}" 
                                     min="[[applicationFromValue]]" class="oj-form-control-max-width-sm" autocomplete="off"></oj-input-date>
                             </div>
-                             <oj-select-many id="select1" value="{{applicationOffice}}" label-edge="inside" label-hint="Office"
+                            <!--  <oj-select-many id="select1" value="{{applicationOffice}}" label-edge="inside" label-hint="Office" options="[[officesAllList]]"
                                 class="oj-form-control-max-width-md" style="width: 300px;">
-                            </oj-select-many> 
+                            </oj-select-many>  -->
                             <div>
                                 <oj-radioset id="enabledRadioset" value="{{selectApplicationRadio}}" style="background-color: transparent;">
                                     <oj-option value="ASD">ASD</oj-option>
@@ -90,14 +90,14 @@
                                 </oj-radioset>
                             </div> 
                             <div class="oj-flex">
-                                <oj-button id="button1" on-oj-action="">View All</oj-button>
+                                <oj-button id="button1" on-oj-action="[[viewApplications]]">View All</oj-button>
                                 &nbsp;&nbsp;
                                 <oj-button id="button1" on-oj-action="">Export</oj-button>
                             </div>
                              <!-- <span class="oj-text-color-danger" id="instituteAppMessage" style="display: none;">Please select institution</span> -->
                         </div> 
                         <div class="oj-panel" style="margin-top: 20px;">
-                            <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" 
+                            <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[applicationYeardataprovider]]"
                                 columns-default.sortable="disabled" layout="fixed"
                                 columns='[
                                     {"headerText": "Year", "id": "year", "sortable": "enabled", "minWidth":"8rem"},
@@ -120,7 +120,7 @@
                             </oj-table>
                         </div>
                         <div class="oj-panel" style="margin-top: 20px;">
-                            <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" 
+                            <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[applicationDataprovider]]"
                                 columns-default.sortable="disabled" layout="fixed"
                                 columns='[
                                     {"headerText": "ID", "id": "year", "sortable": "enabled"},
@@ -173,9 +173,9 @@
                                 <oj-input-date id="applicationTo" label-hint="To Date" value="{{finalChoiceToValue}}" 
                                     min="[[finalChoiceFromValue]]" class="oj-form-control-max-width-sm" autocomplete="off"></oj-input-date>
                             </div>
-                            <oj-select-many id="select1" value="{{finalChoiceOffice}}" label-edge="inside" label-hint="Office" 
+                           <!--  <oj-select-many id="select1" value="{{finalChoiceOffice}}" label-edge="inside" label-hint="Office" options="[[officesAllList]]"
                                 class="oj-form-control-max-width-md" style="width: 300px;">
-                            </oj-select-many>
+                            </oj-select-many> -->
                             <div>
                                 <oj-radioset id="enabledRadioset" value="{{selectFinalChoiceRadio}}" style="background-color: transparent;">
                                     <oj-option value="ASD">ASD</oj-option>
@@ -183,7 +183,7 @@
                                 </oj-radioset>
                             </div> 
                             <div class="oj-flex">
-                                <oj-button id="button1" on-oj-action="">View All</oj-button>
+                                <oj-button id="button1" on-oj-action="[[viewFinalChoices]]">View All</oj-button>
                                 &nbsp;&nbsp;
                                 <oj-button id="button1" on-oj-action="">Export</oj-button>
                             </div>
@@ -216,7 +216,7 @@
                             </p>
                         </div>
                         <div class="oj-panel" style="margin-top: 20px;">
-                            <oj-table id="table" aria-label="Task Table" accessibility.row-header="name"
+                            <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[finalChoiceDataprovider]]"
                                 columns-default.sortable="disabled" layout="fixed"
                                 columns='[
                                     {"headerText": "ID", "id": "studentId", "sortable": "enabled"},

@@ -585,6 +585,16 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.finalChoiceOtherCount = ko.observable();
                 
                 self.partner = ko.observable();
+                self.partners = ko.observableArray([]);
+                self.officesAll = ko.observableArray([]);
+                self.applicationData = ko.observableArray();
+                self.applicationBlob = ko.observable();
+                self.applicationFileName = ko.observable();
+                self.applicationYearData = ko.observableArray();
+
+                self.finalChoiceData = ko.observableArray();
+                self.finalChoiceBlob = ko.observable();
+                self.finalChoiceFileName = ko.observable();
 
                 self.getOffices = ()=>{
                     return new Promise((resolve, reject) => {
@@ -774,9 +784,308 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         if(partnerId){
                             self.partnerId(partnerId);
                             // sessionStorage.removeItem("partnerId")
-                            self.getOffices().then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).catch(error => console.error(error))
+                            self.getOffices().then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getPartners()).catch(error => console.error(error))
                         }
                     }
+                }
+
+                self.getPartners = ()=>{
+                    return new Promise((resolve, reject) => {
+                        self.partners([])
+                        $.ajax({
+                            url: BaseURL+"/getPartners",
+                            type: 'GET',
+                            error: function (xhr, textStatus, errorThrown) {
+                                console.log(textStatus);
+                            },
+                            success: function (data) {
+                                if(data[0] != "No data found"){
+                                    data = JSON.parse(data);
+                                    self.partners([])
+                                    let len = data.length;
+                                    for(let i=0;i<len;i++){
+                                        self.partners.push({value: `${data[i][0]}`, label: `${data[i][1]}`})
+                                    }
+                                }
+                            }
+                        })
+                        setTimeout(() => { resolve(); }, 1000);
+                    });
+                }
+
+                self.officesAll.push({value: `All`, label: `All`})
+
+                self.officesAllList = new ArrayDataProvider(self.officesAll, {
+                    keyAttributes: 'value'
+                });
+
+                self.partnersList = new ArrayDataProvider(self.partners, {
+                    keyAttributes: 'value'
+                });
+
+                self.parnerInfoGet = ()=>{
+                  self.applicationData([]);
+                  self.partnerAfterUpdate();
+                }
+
+                self.viewApplications = ()=>{
+                        self.showApplicationYearData()
+
+                        self.applicationOffice(['All'])
+                        let fromDate = self.applicationFromValue()
+                        let toDate = self.applicationToValue();
+                        let office = self.applicationOffice();
+                        office = office.join(",");
+                        let radio = self.selectApplicationRadio();
+                        self.applicationData([]);
+                        let popup = document.getElementById("progress");
+                        popup.open();
+                        let dataUrl = "/getApplicationsPartnerASDReport"
+                        if(radio=="CSD"){
+                            dataUrl = "/getApplicationsPartnerCSDReport"   
+                        }
+                        $.ajax({
+                            url: BaseURL+dataUrl,
+                            type: 'POST',
+                            data: JSON.stringify({
+                                partnerId:self.partnerId(),
+                                fromDate: fromDate,
+                                toDate: toDate,
+                                officeId: office,
+                            }),
+                            dataType: 'json',
+                            error: function (xhr, textStatus, errorThrown) {
+                                console.log(textStatus);
+                            },
+                            success: function (data) {
+                                var csvContent = '';
+                                var headers = ['Student Id', 'Course', 'Name', 'Office', 'Staff','Application Send Date', 'Course Start Date', 
+                                            'Status', 'Nationality',  'Mobile', 'Email', 'Lead Source', 'UTM Source'];
+                                csvContent += headers.join(',') + '\n';
+                                if(data[0]!='No data found'){
+                                    data = JSON.parse(data);
+                                    let len = data.length;
+
+                                    for(let i=0;i<len;i++){
+                                        self.applicationData.push({
+                                            "studentId" : data[i][0],
+                                            "course" : data[i][1],
+                                            "name" : data[i][2]+" "+data[i][3],
+                                            "office" : data[i][4],
+                                            "staff" : data[i][5],
+                                            "asd" : data[i][6],
+                                            "csd" : data[i][7],
+                                            "status" : data[i][8],
+                                            "nationality" : data[i][9],
+                                            "mobile" : data[i][10],
+                                            "email" : data[i][11],
+                                            "leadSource" : data[i][12],
+                                            "utmSource" : data[i][13],
+                                        });
+                                        var rowData = [data[i][0], data[i][1], data[i][2]+" "+data[i][3], data[i][4], data[i][5], data[i][6], data[i][7], 
+                                                    data[i][8], data[i][9], data[i][10], data[i][11], data[i][12], data[i][13] ]; 
+                                        csvContent += rowData.join(',') + '\n';
+                                    }
+                                    var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                                    var today = new Date();
+                                    var fileName = 'Application_Report_' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.csv';
+                                    self.applicationBlob(blob);
+                                    self.applicationFileName(fileName);
+                                }
+                                else{
+                                    var rowData = []; 
+                                    csvContent += rowData.join(',') + '\n';
+                                    var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                                    var today = new Date();
+                                    var fileName = 'Application_Report_' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.csv';
+                                    self.applicationBlob(blob);
+                                    self.applicationFileName(fileName);
+                                }
+                                let popup = document.getElementById("progress");
+                                popup.close();
+                            }
+                        })
+                }
+
+                self.applicationDataprovider = new ArrayDataProvider(self.applicationData, { keyAttributes: 'id' });
+
+                self.showApplicationYearData = ()=>{
+                    self.applicationOffice(['All'])
+                    let fromDate = self.applicationFromValue()
+                    let toDate = self.applicationToValue();
+                    let office = self.applicationOffice();
+                    office = office.join(",");
+                    let radio = self.selectApplicationRadio();
+                    self.applicationData([]);
+                    let dataUrl = "/getApplicationsPartnerYearCountASDReport"
+                    if(radio=="CSD"){
+                        dataUrl = "/getApplicationsPartnerYearCountCSDReport"   
+                    }
+                    self.applicationYearData([])
+                    $.ajax({
+                        url: BaseURL+dataUrl,
+                        type: 'POST',
+                        data: JSON.stringify({
+                            partnerId:self.partnerId(),
+                            fromDate: fromDate,
+                            toDate: toDate,
+                            officeId: office,
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            if(data[0]!='No data found'){
+                                data = JSON.parse(data);
+                                let len = data.length;
+                                for(let i=0;i<len;i++){
+                                    self.applicationYearData.push({
+                                        year: data[i][0],
+                                        totalApplications: data[i][1],
+                                        totalConditional: data[i][3],
+                                        totalUnconditional: data[i][2],
+                                        totalRejected: data[i][4],
+                                        totalPending: data[i][5]
+                                    });
+                                }
+                            }
+                        }
+                    })
+                }
+
+                self.applicationYeardataprovider = new ArrayDataProvider(self.applicationYearData, { keyAttributes: 'id' });
+
+                self.viewFinalChoices = ()=>{
+                    self.getCourseTypeFinalChoiceCount()
+                        // self.finalChoiceOffice(['All'])
+                        // let fromDate = self.finalChoiceFromValue()
+                        // let toDate = self.finalChoiceToValue();
+                        // let office = self.finalChoiceOffice();
+                        // office = office.join(",");
+                        // let radio = self.selectFinalChoiceRadio();
+                        // let popup = document.getElementById("progress");
+                        // popup.open();
+                        // let dataUrl = "/getFinalChoicesPartnerASDReport"
+                        // if(radio=="CSD"){
+                        //     dataUrl = "/getFinalChoicessPartnerCSDReport"   
+                        // }
+                        // self.finalChoiceData([])
+                        // $.ajax({
+                        //     url: BaseURL+dataUrl,
+                        //     type: 'POST',
+                        //     data: JSON.stringify({
+                        //         partnerId:self.partnerId(),
+                        //         fromDate: fromDate,
+                        //         toDate: toDate,
+                        //         officeId: office,
+                        //     }),
+                        //     dataType: 'json',
+                        //     error: function (xhr, textStatus, errorThrown) {
+                        //         console.log(textStatus);
+                        //     },
+                        //     success: function (data) {
+                        //         var csvContent = '';
+                        //         var headers = ['Student Id', 'Name', 'Email', 'Nationality', 'Office', 'Course Type', 'Course', 'Staff',
+                        //                     'Course Start Date', 'Tution Fee', 'Commission', 'Total Commission', 'UTM Source', 'UTM Medium', 'UTM Campaign', 
+                        //                     'Lead Source'];
+                        //         csvContent += headers.join(',') + '\n';
+                        //         if(data[0]!='No data found'){
+                        //             data = JSON.parse(data);
+                        //             let len = data.length;
+                        //             for(let i=0;i<len;i++){
+                        //                 let commissionPerc = (data[i][10]*data[i][11])/100
+                        //                 let tutionFee = parseInt(data[i][10], 10);
+                        //                 let totalCommission = commissionPerc;
+                        //                 self.finalChoiceData.push({
+                        //                     "studentId" : data[i][0],
+                        //                     "name" : data[i][1]+" "+data[i][2],
+                        //                     "email" : data[i][3],
+                        //                     "nationality" : data[i][4],
+                        //                     "office" : data[i][5],
+                        //                     "courseType" : data[i][6],
+                        //                     "course" : data[i][7],
+                        //                     "staff" : data[i][8],
+                        //                     "csd" : data[i][9],
+                        //                     "tutionFee" : data[i][10],
+                        //                     "commission" : data[i][11],
+                        //                     "totalCommission" : totalCommission,
+                        //                     "utmSource" : data[i][12],
+                        //                     "utmMedium" : data[i][13],
+                        //                     "utmCampaign" : data[i][14],
+                        //                     "leadSource" : data[i][15],
+                        //                     "invoiceNo" : data[i][16],
+                        //                     "invoiceSent" : [data[i][17]],
+                        //                     "paidToUs" : [data[i][18]],
+                        //                     "applicationId" : data[i][19]
+                        //                 });
+                        //                 var rowData = [data[i][0], data[i][1]+" "+data[i][2], data[i][3], data[i][4], data[i][5], data[i][6], data[i][7], 
+                        //                     data[i][8], data[i][9], data[i][10], data[i][11], totalCommission, data[i][12], data[i][13], data[i][14], data[i][15] ]; 
+                        //                 csvContent += rowData.join(',') + '\n';
+                        //             }
+                        //             var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                        //             var today = new Date();
+                        //             var fileName = 'FinalChoice_Report_' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.csv';
+                        //             self.finalChoiceBlob(blob);
+                        //             self.finalChoiceFileName(fileName);
+                        //         }
+                        //         else{
+                        //             var rowData = []; 
+                        //             csvContent += rowData.join(',') + '\n';
+                        //             var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                        //             var today = new Date();
+                        //             var fileName = 'FinalChoice_Report_' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.csv';
+                        //             self.finalChoiceBlob(blob);
+                        //             self.finalChoiceFileName(fileName);
+                        //         }
+                        //         let popup = document.getElementById("progress");
+                        //         popup.close();
+                        //     }
+                        // })
+                }
+
+                self.finalChoiceDataprovider = new ArrayDataProvider(self.finalChoiceData, { keyAttributes: 'id' });
+
+
+                self.getCourseTypeFinalChoiceCount = ()=>{
+                    self.finalChoiceOffice(['All'])
+                    let fromDate = self.finalChoiceFromValue()
+                    let toDate = self.finalChoiceToValue();
+                    let office = self.finalChoiceOffice();
+                    office = office.join(",");
+                    let radio = self.selectFinalChoiceRadio();
+                    let dataUrl = "/getFinalChoicesPartnerCourseTypeASDCount"
+                    if(radio=="CSD"){
+                        dataUrl = "/getFinalChoicesPartnerCourseTypeCSDCount"   
+                    }
+                    $.ajax({
+                        url: BaseURL+dataUrl,
+                        type: 'POST',
+                        data: JSON.stringify({
+                            partnerId:self.partnerId(),
+                            fromDate: fromDate,
+                            toDate: toDate,
+                            officeId: office,
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            console.log(data)
+                            if(data[0]!='No data found'){
+                                data = JSON.parse(data);
+                                self.finalChoiceTotalCount(data[0][0]);
+                                self.finalChoicePgCount(data[0][1]);
+                                self.finalChoiceUgCount(data[0][2]);
+                                self.finalChoicePathwayCount(data[0][3]);
+                                self.finalChoiceYear2Count(data[0][4]);
+                                self.finalChoiceYear3Count(data[0][5]);
+                                self.finalChoicePresessionCount(data[0][6]);
+                                self.finalChoiceOtherCount(data[0][7]);
+                            }
+                        }
+                    })
                 }
             }
         }
