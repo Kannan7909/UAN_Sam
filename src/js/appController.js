@@ -163,9 +163,9 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         {"name": "Partner", "id": "partner", "icons": "fa-solid fa-handshake-angle", 
           "children": [
             {"name": "Partners","id": "addPartner","icons": "fa-solid fa-user-plus", "path":"addPartner"},
-            // {"name": "Partner Profile","id": "partnerProfile","icons": "fa-solid fa-user", "path":"partnerProfile"},
+            {"name": "Partner Profile","id": "partnerProfile","icons": "fa-solid fa-user", "path":"partnerProfile"},
             // {"name": "Partner Commission","id": "partnerCommission","icons": "fa-solid fa-hand-holding-dollar", "path":"partnerCommission"},
-            {"name": "Partner Report","id": "partnerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerReport"},
+            // {"name": "Partner Report","id": "partnerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerReport"}, 
           ]
         },
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},

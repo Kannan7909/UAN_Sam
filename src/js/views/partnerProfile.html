@@ -11,6 +11,7 @@
         <i class="fa-solid fa-eye"></i>
         Show
     </oj-button>
+    <span class="oj-text-color-danger" id="partnerRequireMessage" style="display: none;margin-left:10px;">Please select partner</span> 
 </div>
 
 <div class="oj-panel">
@@ -61,6 +62,8 @@
                                     data="[[counselorList]]" value="{{consultantAssigned}}"></oj-select-single>
                                 <oj-select-single required id="contractDone" label-hint="Contract Done By" label-edge="inside"
                                     data="[[bdmCounselorList]]" value="{{contractDone}}"></oj-select-single>
+                                <oj-input-number id="commissionRate" value="{{commissionRate}}" min="0" max="100" step="10" 
+                                label-hint="Commission Rate" label-edge="inside"></oj-input-number>
                             </oj-form-layout>
                         </oj-validation-group>
                         <div class=" oj-flex oj-sm-justify-content-center">
@@ -84,7 +87,7 @@
                                 class="oj-form-control-max-width-md" style="width: 300px;">
                             </oj-select-many>  -->
                             <div>
-                                <oj-radioset id="enabledRadioset" value="{{selectApplicationRadio}}" style="background-color: transparent;">
+                                <oj-radioset id="enabledRadioset" value="{{selectApplicationRadio}}" class="oj-choice-direction-row" style="background-color: transparent;">
                                     <oj-option value="ASD">ASD</oj-option>
                                     <oj-option value="CSD">CSD</oj-option>
                                 </oj-radioset>
@@ -92,9 +95,9 @@
                             <div class="oj-flex">
                                 <oj-button id="button1" on-oj-action="[[viewApplications]]">View All</oj-button>
                                 &nbsp;&nbsp;
-                                <oj-button id="button1" on-oj-action="">Export</oj-button>
+                                <oj-button id="button1" on-oj-action="[[downloadApplicationData]]">Export</oj-button>
                             </div>
-                             <!-- <span class="oj-text-color-danger" id="instituteAppMessage" style="display: none;">Please select institution</span> -->
+                           <span class="oj-text-color-danger" id="partnerSelectMessage" style="display: none;">Please select partner</span> 
                         </div> 
                         <div class="oj-panel" style="margin-top: 20px;">
                             <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[applicationYeardataprovider]]"
@@ -177,7 +180,7 @@
                                 class="oj-form-control-max-width-md" style="width: 300px;">
                             </oj-select-many> -->
                             <div>
-                                <oj-radioset id="enabledRadioset" value="{{selectFinalChoiceRadio}}" style="background-color: transparent;">
+                                <oj-radioset id="enabledRadioset" value="{{selectFinalChoiceRadio}}" class="oj-choice-direction-row" style="background-color: transparent;">
                                     <oj-option value="ASD">ASD</oj-option>
                                     <oj-option value="CSD">CSD</oj-option>
                                 </oj-radioset>
@@ -185,9 +188,9 @@
                             <div class="oj-flex">
                                 <oj-button id="button1" on-oj-action="[[viewFinalChoices]]">View All</oj-button>
                                 &nbsp;&nbsp;
-                                <oj-button id="button1" on-oj-action="">Export</oj-button>
+                                <oj-button id="button1" on-oj-action="[[exportFinalChoices]]">Export</oj-button>
                             </div>
-<!--                             <span class="oj-text-color-danger" id="instituteFinalMessage" style="display: none;">Please select institution</span>   --> 
+                            <span class="oj-text-color-danger" id="parnerFinalMessage" style="display: none;">Please select partner</span>  
                        </div>
                         <div class="oj-panel oj-flex oj-sm-justify-content-space-between oj-flex oj-sm-align-items-center" style="margin: 20px 0px;">
                             <p class="oj-flex oj-sm-align-items-center" style="margin-top: 15px;">
@@ -312,3 +315,36 @@
         </div>
     </div>
 </oj-popup>
+
+
+<oj-dialog id="editInvoice">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">
+            Edit Invoice
+        </p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[editInvoiceCancel]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <oj-validation-group id="invoiceForm" class="form-container" role="group">
+            <oj-form-layout id="invoiceForm" direction="row">
+                <div class="oj-flex oj-sm-justify-content-center">
+                    <oj-input-text id="invoiceNo" label-hint="Invoice Number" value="{{editInvoiceNo}}"  required="true"></oj-input-text>
+                </div>
+                <div class="oj-flex oj-sm-justify-content-space-around" style="margin-top: 20px;">
+                    <oj-checkboxset id="enabledCheckboxset" value='{{editInvoiceSent}}' label-hint="Invoice Sent">
+                        <oj-option value="sent">Invoice Sent</oj-option>
+                    </oj-checkboxset>
+                    <oj-checkboxset id="enabledCheckboxset" value='{{editPaidToUs}}' label-hint="Paid tp Us">
+                        <oj-option value="paid">Paid to Us</oj-option>
+                    </oj-checkboxset>
+                </div>
+            </oj-form-layout>
+        </oj-validation-group>
+        <div class="oj-flex oj-sm-justify-content-center">
+            <oj-button on-oj-action="[[updateInvoiceDetails]]" style="background-color: #5cb85c;border: none;">Submit</oj-button>
+        </div>
+    </div>
+</oj-dialog>
