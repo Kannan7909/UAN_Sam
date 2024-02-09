@@ -81,10 +81,14 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.partner = ko.observable()
                 self.partnersList = ko.observableArray()
-                self.partners = ()=>{
+                self.partners = (officeId)=>{
                     $.ajax({
-                        url: BaseURL+"/getPartners",
-                        type: 'GET',
+                        url: BaseURL+"/getPartnerWithOfficeId",
+                        type: 'POST',
+                        data: JSON.stringify({
+                            officeId: officeId,
+                        }),
+                        dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);
                         },
