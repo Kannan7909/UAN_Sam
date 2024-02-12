@@ -15,9 +15,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 const tabData = [
                     { name: 'Details', id: 'details'},
                     { name: 'Applications', id: 'applications'},
-                    { name: 'Final Choice', id: 'finalChoice'}
-                   /*  { name: 'Contract Files', id: 'contractFiles'},
-                    { name: 'Commission rate new', id: 'commissionRate'},
+                    { name: 'Final Choice', id: 'finalChoice'},
+                    { name: 'Contract Files', id: 'contractFiles'}
+                    /*   { name: 'Commission rate new', id: 'commissionRate'},
                     { name: 'Add Logs', id: 'logs'} */
                 ];
                 self.tabDataProvider = new ArrayDataProvider(tabData, { keyAttributes: 'id' });
@@ -601,6 +601,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.editPaidToUs = ko.observable();
                 self.editApplicationId = ko.observable();
                 self.commissionRate = ko.observable();
+                self.fileNames = ko.observableArray(new Array());
 
 
                 self.getOffices = ()=>{
@@ -850,6 +851,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     }else{
                         self.applicationData([]);
                         self.partnerAfterUpdate();
+                        self.getPartnerContractFile(); 
                     }
                 }
 
@@ -1249,6 +1251,177 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     }
                 }
             }
+
+            self.selectListener = (event) => {
+                const files = event.detail.files;
+                if(self.partnerId()=="" || self.partnerId()==undefined){
+                    document.getElementById("file-error").style.display = "block"
+                    setTimeout(()=>{
+                        document.getElementById("file-error").style.display = "none"
+                    }, 3000)
+                }
+                else{
+                    Array.prototype.map.call(files, (file) => {
+                        self.fileNames.push({"file" : file.name});
+                        var formData = new FormData();
+                        formData.append("file", file);
+                        formData.append("partnerId", self.partnerId())
+                        $.ajax({
+                            url:   BaseURL + "/partnerContractFileUpload",
+                            type: "POST",
+                            data:  formData,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.log(textStatus);
+                            },
+                            success: (data) => {
+                                console.log(data);
+                            }
+                        });
+                    })
+                }
+            }; 
+
+            self.removeFile = (e)=>{
+                var fileNamesOfObjects = self.fileNames().map(pair => pair.file);
+                var index = fileNamesOfObjects.indexOf(e.target.id);
+                if (index !== -1) {
+                    fileNamesOfObjects.splice(index, 1);
+                }
+                self.fileNames(fileNamesOfObjects.map((value, index) => ({"no":index+1, "file": value })));
+            }
+
+            self.previewClick = (e)=>{
+                let popup = document.getElementById("progress");
+                popup.open();
+                $.ajax({
+                    url: BaseURL+"/getPartnerContractFile",
+                    type: 'POST',
+                    data: JSON.stringify({
+                        fileName : e.target.id
+                    }),
+                    dataType: 'json',
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    },
+                    success: function (data) {
+                        let popup = document.getElementById("progress");
+                        popup.close();
+                        var fileType = data[1]
+                        var base64Code = data[0][0];
+                        console.log(data);
+                        if(fileType=="pdf"){
+                            var byteCharacters = atob(base64Code);
+                            var byteNumbers = new Array(byteCharacters.length);
+                            for (var i = 0; i < byteCharacters.length; i++) {
+                                byteNumbers[i] = byteCharacters.charCodeAt(i);
+                            }
+                            var byteArray = new Uint8Array(byteNumbers);
+                            var blob = new Blob([byteArray], { type: 'application/pdf' });
+
+                            var blobUrl = URL.createObjectURL(blob);
+                            window.open(blobUrl, '_blank');
+                        }
+                        else if(fileType=="image"){
+                            var newWindow = window.open();
+                            newWindow.document.write('<html><head><title>Image Viewer</title></head><body>');
+                            newWindow.document.write('<img src="data:image/png;base64,' + base64Code + '" alt="Base64 Image">');
+                            newWindow.document.write('</body></html>');
+                        }
+                        else if(fileType=="xl"){
+                            var excelDataUri = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + base64Code;
+                            var downloadLink = document.createElement('a');
+                            downloadLink.href = excelDataUri;
+                            downloadLink.download = self.offerFile();
+                            document.body.appendChild(downloadLink);
+                            downloadLink.click();
+                        }
+                        else if(fileType=="csv"){
+                            var csvDataUri = 'data:text/csv;base64,' + base64Code;
+                            var downloadLink = document.createElement('a');
+                            downloadLink.href = csvDataUri;
+                            downloadLink.download = self.offerFile();
+                            document.body.appendChild(downloadLink);
+                            downloadLink.click();
+                            document.body.removeChild(downloadLink);
+                        }
+                        else{
+                            self.offerFileMessage("File not found")
+                            setTimeout(()=>{
+                                self.offerFileMessage("")
+                            },3000)
+                        }
+                    }
+                })
+            }
+
+            self.updateContractFiles = ()=>{
+                let popup = document.getElementById("progress");
+                popup.open();
+                var fileNamesOfObjects = self.fileNames().map(pair => pair.file);
+                let contractFiles = fileNamesOfObjects
+                if(contractFiles.length!=0){
+                    contractFiles = contractFiles.join(",");
+                }
+                else{
+                    contractFiles = null;
+                }
+                $.ajax({
+                    url: BaseURL+"/updatePartnerContractFiles",
+                    type: 'POST',
+                    data: JSON.stringify({
+                        partnerId:self.partnerId(),
+                        contractFiles : contractFiles,
+                    }),
+                    dataType: 'json',
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    },
+                    success: function (data) {
+                        self.getPartnerContractFile()
+                    }
+                })
+            }
+            
+            self.getPartnerContractFile = ()=>{
+                $.ajax({
+                    url: BaseURL+"/getPartnerContractFileList",
+                    type: 'POST',
+                    data: JSON.stringify({
+                        partnerId:self.partnerId(),
+                    }),
+                    dataType: 'json',
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    },
+                    success: function (data) {
+                        console.log(data)
+                        let popup = document.getElementById("progress");
+                        popup.close();
+                        if(data[0] != "No data found"){
+                            data = JSON.parse(data);
+                            let len = data.length;
+                            self.fileNames([])
+                            for(let i=0;i<len;i++){
+                                if(data[i][1]!=null){
+                                    var filesArray = data[i][1].split(',');
+                                    let l = filesArray.length;
+                                    for(let j=0;j<l;j++){
+                                        self.fileNames.push({"no": j+1, "file" :filesArray[j]});
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+
+            self.fileDataProvider = new ArrayDataProvider(self.fileNames, {
+                keyAttributes: 'id'
+            });
+
 
             }
         }

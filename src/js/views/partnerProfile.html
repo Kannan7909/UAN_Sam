@@ -286,7 +286,40 @@
             </div>
             <div slot="contractFiles" id="contact-tab-panel" role="tabpanel" aria-labelledby="contact-tab">
                 <div class="demo-tab-content">
-                    
+                    <div class="oj-flex oj-sm-justify-content-center">
+                        <oj-file-picker selection-mode="multiple" on-oj-select="[[selectListener]]"></oj-file-picker>
+                        <p class="oj-text-color-danger" id="file-error" style="display: none;;margin-left:10px;margin-top:40px;">Please select partner</p>
+                    </div>
+                    <div>
+                        <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[fileDataProvider]]"
+                            columns-default.sortable="disabled"
+                            columns='[
+                                    {"headerText": "#", "id": "name"},
+                                    {"headerText": "File Name", "id": "fileName", "weight": 2}, 
+                                    {"headerText": "Action", "id": "action"}]'
+                            class="demo-table-container">
+                            <template slot="rowTemplate" data-oj-as="row">
+                                <tr style="font-size: 17px !important;">
+                                    <td><oj-bind-text value="[[row.data.no]]"></oj-bind-text></td>
+                                    <td>
+                                        <a :id="[[row.data.file]]" on-click= "[[previewClick]]" target="_blank">
+                                            <oj-bind-text value="[[row.data.file]]"></oj-bind-text>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <oj-button :id="[[row.data.file]]" on-oj-action="[[removeFile]]" display="icons" chroming="borderless">
+                                            <span slot="startIcon" class="oj-ux-ico-delete-circle"></span>
+                                        </oj-button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </oj-table>
+                    </div>
+                    <div class="oj-flex oj-sm-justify-content-center" style="margin-top: 30px;">
+                        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[updateContractFiles]]" style="width: 100px;">
+                            Update
+                        </oj-button>
+                    </div>
                 </div>
             </div>
             <div slot="commissionRate" id="contact-tab-panel" role="tabpanel" aria-labelledby="contact-tab">
