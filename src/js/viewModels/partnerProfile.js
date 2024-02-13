@@ -16,9 +16,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     { name: 'Details', id: 'details'},
                     { name: 'Applications', id: 'applications'},
                     { name: 'Final Choice', id: 'finalChoice'},
-                    { name: 'Contract Files', id: 'contractFiles'}
-                    /*   { name: 'Commission rate new', id: 'commissionRate'},
-                    { name: 'Add Logs', id: 'logs'} */
+                    { name: 'Contract Files', id: 'contractFiles'},
+                    /*   { name: 'Commission rate new', id: 'commissionRate'},  */
+                    { name: 'Add Logs', id: 'logs'}
                 ];
                 self.tabDataProvider = new ArrayDataProvider(tabData, { keyAttributes: 'id' });
                 self.selectedItem = ko.observable("details");
@@ -603,6 +603,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.commissionRate = ko.observable();
                 self.fileNames = ko.observableArray(new Array());
 
+                self.partnerNote = ko.observable()
+                self.partnerNoteData = ko.observableArray();
 
                 self.getOffices = ()=>{
                     return new Promise((resolve, reject) => {
@@ -801,7 +803,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         if(partnerId){
                             self.partnerId(partnerId);
                             sessionStorage.removeItem("partnerId")
-                            self.getOffices().then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getPartners()).catch(error => console.error(error))
+                            self.getOffices().then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getPartners()).then(()=>self.getPartnerNote()).catch(error => console.error(error))
                         }else{
                             self.getPartners(); 
                         }
@@ -852,6 +854,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.applicationData([]);
                         self.partnerAfterUpdate();
                         self.getPartnerContractFile(); 
+                        self.getPartnerNote(); 
                     }
                 }
 
@@ -1422,6 +1425,116 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 keyAttributes: 'id'
             });
 
+
+            self.getPartnerNote = ()=>{
+                self.partnerNoteData([])
+                $.ajax({
+                    url: BaseURL+"/getPartnerNotes",
+                    type: 'POST',
+                    data: JSON.stringify({
+                        partnerId:self.partnerId(),
+                    }),
+                    dataType: 'json',
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    },
+                    success: function (data) {
+                        if(data[0]!='No data found'){
+                            data = JSON.parse(data);
+                            console.log(data)
+                            let len = data.length;
+                            for(let i=0;i<len;i++){
+                                var date = data[i][2];                                    
+                                date = new Date(date);
+                                var year = date.getFullYear();
+                                var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                                var day = ('0' + date.getDate()).slice(-2);
+                                date =  `${day}-${month}-${year}`
+                                self.partnerNoteData.push({
+                                    "staffName" : data[i][0],
+                                    "note" : data[i][1],
+                                    "date" : date,
+                                    "noteId" : data[i][3]
+                                })
+                            }
+                        }
+                    }
+                })
+            }
+
+            self.partnerNoteDataProvider = new ArrayDataProvider(self.partnerNoteData, { keyAttributes: 'id' });
+
+            self.addPartnerLog = ()=>{
+                if(self.partnerId()==undefined){
+                    document.getElementById("partnerLogMessage").style.display = "block";
+                    setTimeout(()=>{
+                        document.getElementById("partnerLogMessage").style.display = "none";
+                    }, 5000);
+                }else{
+                    let popup = document.getElementById("addLog");
+                    popup.open();
+                    self.partnerNote('')
+                 }
+            }
+            
+            self.addLogCancel = ()=>{
+                let popup = document.getElementById("addLog");
+                popup.close();
+            }
+
+            self.submitNotes = ()=>{
+                    const formValid = self._checkValidationGroup("formValidation"); 
+                    if (formValid) {
+                        let popup = document.getElementById("progress");
+                        popup.open();
+                        $.ajax({
+                            url: BaseURL+"/addPartnerNotes",
+                            type: 'POST',
+                            data: JSON.stringify({
+                                staffId : sessionStorage.getItem("userId"),
+                                note : self.partnerNote(),
+                                partnerId : self.partnerId()
+                            }),
+                            dataType: 'json',
+                            error: function (xhr, textStatus, errorThrown) {
+                                console.log(textStatus);
+                            },
+                            success: function (data) {
+                                console.log(data)
+                                let popup = document.getElementById("progress");
+                                popup.close();
+                                self.addLogCancel()
+                                self.partnerNote('')
+                                self.getPartnerNote()
+                            }
+                        })
+                    }
+            }
+
+            self.deleteLog = (e)=>{
+                let id = e.target.id;
+                let popup = document.getElementById("progress");
+                popup.open();
+                $.ajax({
+                    url: BaseURL+"/deletePartnerNote",
+                    type: 'POST',
+                    data: JSON.stringify({
+                        partnerNoteId : id
+                    }),
+                    dataType: 'json',
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        let popup = document.getElementById("progress");
+                        popup.close();
+                        self.addLogCancel()
+                        self.partnerNote(''),
+                        self.getPartnerNote()
+                    }
+                })
+            }
 
             }
         }

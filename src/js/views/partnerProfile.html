@@ -283,7 +283,6 @@
                     </div>  
                     </div>
                 </div>
-            </div>
             <div slot="contractFiles" id="contact-tab-panel" role="tabpanel" aria-labelledby="contact-tab">
                 <div class="demo-tab-content">
                     <div class="oj-flex oj-sm-justify-content-center">
@@ -332,7 +331,50 @@
             <div slot="logs" id="contact-tab-panel" role="tabpanel" aria-labelledby="contact-tab">
                 <div class="demo-tab-content">
                     <div class="oj-panel">
-                        
+                        <div class="oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="width: 100%;">
+                            <h6 style="font-weight: 500;font-size: 25px; margin-left: 20px;">Partner Log</h6>
+                            <div class="oj-flex oj-sm-flex-direction-column" style="margin-right: 20px;">
+                                <oj-button on-oj-action="[[addPartnerLog]]">Add Log</oj-button>
+                                <p class="oj-text-color-danger" id="partnerLogMessage" style="display: none;">Please select partner</p>
+                            </div>
+                        </div>
+
+                        <div class="oj-panel">
+                            <div id="notesDiv" class="demo-padding demo-container">
+                                <div id="componentDemoContent" style="width: 1px; min-width: 100%;">
+                                    <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[partnerNoteDataProvider]]"
+                                        columns='[
+                                            {"headerText": "Staff Name",  "field": "staffName", "headerClassName": "oj-sm-only-hide",
+                                                "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                                            {"headerText": "Note",  "field": "note", "resizable": "enabled", "id": "depName"},
+                                            {"headerText": "Date Added",  "field": "date", "headerClassName": "oj-md-down-hide",
+                                                "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                                            {"headerText": "Action",  "field": "action", "resizable": "enabled", "id": "depName"}]'
+                                        class="demo-table-container">
+                                        <template slot="rowTemplate" data-oj-as="row">
+                                            <tr>
+                                                <td>
+                                                    <oj-bind-text value="[[row.data.staffName]]"></oj-bind-text>
+                                                </td>
+                                                <td>
+                                                    <oj-bind-text value="[[row.data.note]]"></oj-bind-text>
+                                                </td>
+                                                <td>
+                                                    <oj-bind-text value="[[row.data.date]]"></oj-bind-text>
+                                                </td>
+                                                <td>
+                                                    <oj-button title="Delete"  on-oj-action="[[deleteLog]]"
+                                                        :id="[[row.data.noteId]]" style="background-color: transparent;">
+                                                        <i class="fa-solid fa-trash" style="color: #06668a;font-size: 20px;"></i>
+                                                    </oj-button>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </oj-table>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -378,6 +420,28 @@
         </oj-validation-group>
         <div class="oj-flex oj-sm-justify-content-center">
             <oj-button on-oj-action="[[updateInvoiceDetails]]" style="background-color: #5cb85c;border: none;">Submit</oj-button>
+        </div>
+    </div>
+</oj-dialog>
+
+<oj-dialog id="addLog">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">
+            Add Log
+        </p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[addLogCancel]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <oj-validation-group id="formValidation" class="form-container" role="group">
+            <oj-form-layout id="personal-information" direction="row">
+                <oj-text-area value="{{partnerNote}}" label-hint="Enter your Notes" required="true" rows="5"></oj-text-area>
+            </oj-form-layout>
+        </oj-validation-group>
+        <div class="oj-flex oj-sm-justify-content-center">
+            <oj-button on-oj-action="[[submitNotes]]" style="background-color: #5cb85c;border: none;">Submit</oj-button>
         </div>
     </div>
 </oj-dialog>
