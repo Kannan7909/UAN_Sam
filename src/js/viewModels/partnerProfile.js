@@ -17,8 +17,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     { name: 'Applications', id: 'applications'},
                     { name: 'Final Choice', id: 'finalChoice'},
                     { name: 'Contract Files', id: 'contractFiles'},
-                    /*   { name: 'Commission rate new', id: 'commissionRate'},  */
-                    { name: 'Add Logs', id: 'logs'}
+                    { name: 'Add Logs', id: 'logs'},
+                    { name: 'Credential', id: 'credential'},
                 ];
                 self.tabDataProvider = new ArrayDataProvider(tabData, { keyAttributes: 'id' });
                 self.selectedItem = ko.observable("details");
@@ -605,6 +605,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.partnerNote = ko.observable()
                 self.partnerNoteData = ko.observableArray();
+                self.partnerEmail = ko.observable('');
+                self.password = ko.observable('');
 
                 self.getOffices = ()=>{
                     return new Promise((resolve, reject) => {
@@ -855,6 +857,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.partnerAfterUpdate();
                         self.getPartnerContractFile(); 
                         self.getPartnerNote(); 
+                        self.getPartnerInfo(); 
+                        self.generatePassword(8)
                     }
                 }
 
@@ -1483,7 +1487,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
             }
 
             self.submitNotes = ()=>{
-                    const formValid = self._checkValidationGroup("formValidation"); 
+                    const formValid = self._checkValidationGroup("logFormValidation"); 
                     if (formValid) {
                         let popup = document.getElementById("progress");
                         popup.open();
@@ -1535,6 +1539,75 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     }
                 })
             }
+
+            self.getPartnerInfo = ()=>{
+                $.ajax({
+                    url: BaseURL+"/getPartnerWithId",
+                    type: 'POST',
+                    data: JSON.stringify({
+                        partnerId:self.partnerId(),
+                    }),
+                    dataType: 'json',
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        console.log(data)
+                        self.partnerEmail(data[0][5]);
+                    }
+                })
+            }
+
+            self.generatePassword = (length) =>{
+                const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]\;?><,./-=1234567890';
+                let password = '';
+                
+                for (let i = 0; i < length; i++) {
+                  const randomIndex = Math.floor(Math.random() * charset.length);
+                  password += charset[randomIndex];
+                }
+                
+                self.password(password)
+            }
+
+            self.addUser = ()=>{
+                if(self.partnerId()==undefined){
+                    document.getElementById("partnerCredentialMessage").style.display = "block";
+                    setTimeout(()=>{
+                        document.getElementById("partnerCredentialMessage").style.display = "none";
+                    }, 5000);
+                }else{
+                    const credentialFormValid = self._checkValidationGroup("credentialValidation"); 
+                    if(credentialFormValid && self.partnerEmail() != ''){
+                            let popup = document.getElementById("progress");
+                            popup.open();
+                            $.ajax({
+                                url: BaseURL+"/addUser",
+                                type: 'POST',
+                                data: JSON.stringify({
+                                    name : self.partnerEmail(),
+                                    office : self.processingOffice(),
+                                    role : 'Partner',
+                                    email : self.partnerEmail(),
+                                    password : self.password()
+                                }),
+                                dataType: 'json',
+                                timeout: sessionStorage.getItem("timeInetrval"),
+                                context: self,
+                                error: function (xhr, textStatus, errorThrown) {
+                                    console.log(textStatus);
+                                },
+                                success: function (data) {
+                                    console.log(data)
+                                    let popup = document.getElementById("progress");
+                                    popup.close();
+                                }
+                            })
+                        }
+                    }
+                }
+            
 
             }
         }

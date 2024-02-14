@@ -321,13 +321,6 @@
                     </div>
                 </div>
             </div>
-            <div slot="commissionRate" id="contact-tab-panel" role="tabpanel" aria-labelledby="contact-tab">
-                <div class="demo-tab-content">
-                    <div class="oj-panel">
-                        
-                    </div>
-                </div>
-            </div>
             <div slot="logs" id="contact-tab-panel" role="tabpanel" aria-labelledby="contact-tab">
                 <div class="demo-tab-content">
                     <div class="oj-panel">
@@ -375,6 +368,24 @@
                             </div>
                         </div>
 
+                    </div>
+                </div>
+            </div>
+            <div slot="credential" id="credential-tab-panel" role="tabpanel" aria-labelledby="credential-tab">
+                <div class="demo-tab-content">
+                    <div class="oj-panel">
+                        <oj-validation-group id="credentialValidation" class="form-container" role="group">
+                            <oj-form-layout id="credential-information" direction="row" max-columns="2" style="margin-left:18%;margin-top:20px;">
+                                    <oj-input-text id="partnerEmail" label-hint="Email" value="{{partnerEmail}}" required="true" readonly="true"></oj-input-text>
+                                    <oj-input-password id="password" label-hint="Password" required="true"  value="{{password}}"  mask-icon="visible"></oj-input-password>
+                            </oj-form-layout>
+                        </oj-validation-group>
+                        <div class=" oj-flex oj-sm-justify-content-center">
+                            <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[addUser]]" style="width: 100px;">
+                                Submit
+                            </oj-button>
+                            <p class="oj-text-color-danger" id="partnerCredentialMessage" style="display: none;margin-left:10px;">Please select partner</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -435,8 +446,8 @@
         </oj-button>
     </div>
     <div slot="body">
-        <oj-validation-group id="formValidation" class="form-container" role="group">
-            <oj-form-layout id="personal-information" direction="row">
+        <oj-validation-group id="logFormValidation" class="form-container" role="group">
+            <oj-form-layout id="log-information" direction="row">
                 <oj-text-area value="{{partnerNote}}" label-hint="Enter your Notes" required="true" rows="5"></oj-text-area>
             </oj-form-layout>
         </oj-validation-group>
