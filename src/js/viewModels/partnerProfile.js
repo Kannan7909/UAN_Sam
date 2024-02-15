@@ -607,6 +607,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.partnerNoteData = ko.observableArray();
                 self.partnerEmail = ko.observable('');
                 self.password = ko.observable('');
+                self.partnerName = ko.observable('');
+                self.btnAction = ko.observable('');
 
                 self.getOffices = ()=>{
                     return new Promise((resolve, reject) => {
@@ -807,6 +809,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             sessionStorage.removeItem("partnerId")
                             self.getOffices().then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getPartners()).then(()=>self.getPartnerNote()).catch(error => console.error(error))
                         }else{
+                            self.getOffices();
+                            self.getBdmCounselors();
                             self.getPartners(); 
                         }
                     }
@@ -858,7 +862,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.getPartnerContractFile(); 
                         self.getPartnerNote(); 
                         self.getPartnerInfo(); 
-                        self.generatePassword(8)
+                        self.getPartnerPassword();
                     }
                 }
 
@@ -1415,8 +1419,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 if(data[i][1]!=null){
                                     var filesArray = data[i][1].split(',');
                                     let l = filesArray.length;
-                                    for(let j=0;j<l;j++){
+                                 /*    for(let j=0;j<l;j++){
                                         self.fileNames.push({"no": j+1, "file" :filesArray[j]});
+                                    } */
+                                    // desc list
+                                    for (let j = l - 1; j >= 0; j--) {
+                                        self.fileNames.push({"no": l - j, "file": filesArray[j]});
                                     }
                                 }
                             }
@@ -1554,6 +1562,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     success: function (data) {
                         data = JSON.parse(data);
                         console.log(data)
+                        self.partnerName(data[0][3] + " " + data[0][4]);
                         self.partnerEmail(data[0][5]);
                     }
                 })
@@ -1588,9 +1597,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 data: JSON.stringify({
                                     name : self.partnerEmail(),
                                     office : self.processingOffice(),
-                                    role : 'Partner',
+                                    role : 'partner',
                                     email : self.partnerEmail(),
-                                    password : self.password()
+                                    password : self.password(),
+                                    partnerId:self.partnerId(),
                                 }),
                                 dataType: 'json',
                                 timeout: sessionStorage.getItem("timeInetrval"),
@@ -1602,10 +1612,105 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                     console.log(data)
                                     let popup = document.getElementById("progress");
                                     popup.close();
+                                    self.getPartnerPassword();
                                 }
                             })
                         }
                     }
+                }
+
+                self.updatePartnerCredential = ()=>{
+                    if(self.partnerId()==undefined){
+                        document.getElementById("partnerCredentialMessage").style.display = "block";
+                        setTimeout(()=>{
+                            document.getElementById("partnerCredentialMessage").style.display = "none";
+                        }, 5000);
+                    }else{
+                        const credentialFormValid = self._checkValidationGroup("credentialValidation"); 
+                        if(credentialFormValid && self.partnerEmail() != ''){
+                                let popup = document.getElementById("progress");
+                                popup.open();
+                                    $.ajax({
+                                        url: BaseURL+"/updatePartnerCredential",
+                                        type: 'POST',
+                                        data: JSON.stringify({
+                                            password : self.password(),
+                                            partnerId:self.partnerId(),
+                                        }),
+                                        dataType: 'json',
+                                        timeout: sessionStorage.getItem("timeInetrval"),
+                                        context: self,
+                                        error: function (xhr, textStatus, errorThrown) {
+                                            console.log(textStatus);
+                                        },
+                                        success: function (data) {
+                                           console.log(data)
+                                           let popup = document.getElementById("progress");
+                                           popup.close();
+                                        }
+                                    })
+                                }
+                            }
+                }
+
+                self.sendCredential = ()=>{
+                    if(self.partnerId()==undefined){
+                        document.getElementById("partnerCredentialMessage").style.display = "block";
+                        setTimeout(()=>{
+                            document.getElementById("partnerCredentialMessage").style.display = "none";
+                        }, 5000);
+                    }else{
+                        const credentialFormValid = self._checkValidationGroup("credentialValidation"); 
+                        if(credentialFormValid && self.partnerEmail() != ''){
+                                let popup = document.getElementById("progress");
+                                popup.open();
+                                    $.ajax({
+                                        url: BaseURL+"/sendPartnerCredential",
+                                        type: 'POST',
+                                        data: JSON.stringify({
+                                            name : self.partnerName(),
+                                            email : self.partnerEmail(),
+                                            password : self.password(),
+                                        }),
+                                        dataType: 'json',
+                                        timeout: sessionStorage.getItem("timeInetrval"),
+                                        context: self,
+                                        error: function (xhr, textStatus, errorThrown) {
+                                            console.log(textStatus);
+                                        },
+                                        success: function (data) {
+                                           console.log(data)
+                                           let popup = document.getElementById("progress");
+                                           popup.close();
+                                        }
+                                    })
+                                }
+                            }
+                }
+
+                self.getPartnerPassword = ()=>{
+                    $.ajax({
+                        url: BaseURL+"/getPartnerPassword",
+                        type: 'POST',
+                        data: JSON.stringify({
+                            partnerId:self.partnerId(),
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                        if(data[0]!='No data found'){
+                            data = JSON.parse(data);
+                            console.log(data)
+                            self.password(data[0][0])
+                            self.btnAction('update');
+                        }else{
+                          self.generatePassword(8);
+                          self.btnAction('save');
+                        }
+                        }
+                    })
                 }
             
 

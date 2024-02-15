@@ -104,7 +104,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         }
                     })
                 }
-                self.partners();
                 self.partnersDp = new ArrayDataProvider(self.partnersList, {
                     keyAttributes: 'value'
                 });
@@ -1232,9 +1231,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.partner(data[0][25]);
                                 if(data[0][1]==null){
                                     self.getCounselors(data[0][2], "");
+                                    self.partners(data[0][2]);
                                 }
                                 else{
                                     self.getCounselors(data[0][2], data[0][1]);
+                                    self.partners(data[0][2]);
                                 }
                             }
                             else{
@@ -1317,6 +1318,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.officeChangeHandler = ()=>{
                     self.getCounselors(self.office1(), "")
+                    self.partners(self.office1())
                 }
                 self.counselors = ko.observableArray([])
 

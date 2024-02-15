@@ -51,7 +51,12 @@
                     data="[[abroadDestionationsDp]]" value="{{studyAbroadDestination}}"></oj-select-single>
                 <oj-input-text id="marketingSource" label-hint="Marketing Source" required="true" autocomplete="off" value="{{marketingSource}}"></oj-input-text>
             </oj-form-layout>
-            <oj-button id="save" chroming="outlined" on-oj-action="[[formSubmit]]">Submit</oj-button>
+            <oj-bind-if test="[[userRole() === 'partner' ]]">
+                <oj-button id="save" chroming="outlined" on-oj-action="[[partnerFormSubmit]]">Submit</oj-button>
+            </oj-bind-if>
+            <oj-bind-if test="[[userRole() != 'partner' ]]">
+                <oj-button id="save" chroming="outlined" on-oj-action="[[formSubmit]]">Submit</oj-button>
+            </oj-bind-if>
         </div>
     </oj-validation-group>
 

@@ -381,9 +381,19 @@
                             </oj-form-layout>
                         </oj-validation-group>
                         <div class=" oj-flex oj-sm-justify-content-center">
-                            <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[addUser]]" style="width: 100px;">
+                            <oj-bind-if test="[[btnAction() == 'save' ]]">
+                            <oj-button id="btnSubmit" class="oj-button-sm" display="icons" on-oj-action="[[addUser]]" style="width: 100px;margin-right: 10px;">
                                 Submit
                             </oj-button>
+                            </oj-bind-if>
+                            <oj-bind-if test="[[btnAction() == 'update' ]]">
+                            <oj-button id="btnUpdate" class="oj-button-sm" display="icons" on-oj-action="[[updatePartnerCredential]]" style="width: 100px;margin-right: 10px;">
+                                Update
+                            </oj-button>
+                            <oj-button id="btnSend" class="oj-button-sm" display="icons" on-oj-action="[[sendCredential]]" style="width: 100px;">
+                                Send
+                            </oj-button>
+                            </oj-bind-if>
                             <p class="oj-text-color-danger" id="partnerCredentialMessage" style="display: none;margin-left:10px;">Please select partner</p>
                         </div>
                     </div>

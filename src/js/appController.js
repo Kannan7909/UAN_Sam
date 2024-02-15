@@ -47,6 +47,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "managerDashboard", detail: { label: "Manager Dashboard", iconClass: "fa-solid fa-gauge", }, },
         { path: "counsellorDashboard", detail: { label: "Counsellor Dashboard", iconClass: "fa-solid fa-gauge", }, },
         { path: "dashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
+        { path: "partnerDashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
         { path: "addStudent", detail: { label: "Add Student", iconClass: "fa-solid fa-user-plus"},},
         { path: "bulkStudentAdd", detail: { label: "Bulk Student Add", iconClass: "oj-ux-ico-bar-chart", },},
         { path: "searchStudent", detail: { label: "Search Student", iconClass: "fa-solid fa-magnifying-glass", }, },
@@ -88,6 +89,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "manageUsers", detail: { label: "Manage Staff", iconClass: "fa-solid fa-people-roof", }, },
         { path: "manageOffice", detail: { label: "Manage Office", iconClass: "fa-regular fa-building", }, },
         { path: "managerDashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
+        { path: "partnerDashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
         { path: "addStudent", detail: { label: "Add Student", iconClass: "fa-solid fa-user-plus" }, },
         { path: "bulkStudentAdd", detail: { label: "Bulk Student Add", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "searchStudent", detail: { label: "Search Student", iconClass: "fa-solid fa-magnifying-glass", }, },
@@ -106,6 +108,22 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "guideManageStaff", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "guideManageReport", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
+    } else if (sessionStorage.getItem("userRole") == "partner") {
+      var navData = [
+        { path: "", redirect: "signin" },
+        { path: "signin", detail: { label: "Signin", iconClass: "oj-ux-ico-bar-chart" }, },
+        { path: "partnerDashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
+        { path: "managerDashboard", detail: { label: "Manager Dashboard", iconClass: "fa-solid fa-gauge", }, },
+        { path: "counsellorDashboard", detail: { label: "Counsellor Dashboard", iconClass: "fa-solid fa-gauge", }, },
+        { path: "dashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
+        { path: "addStudent", detail: { label: "Add Student", iconClass: "fa-solid fa-people-roof", }, },
+        { path: "help", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManageStudents", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManageoffice", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManageStaff", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManageReport", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "finalChoiceReport", detail: { label: "Final Choice Report", iconClass: "fa-solid fa-people-roof", }, },        
+      ];
     } else {
       var navData = [
         { path: "", redirect: "signin" },
@@ -120,6 +138,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "manageUsers", detail: { label: "Manage Staff", iconClass: "fa-solid fa-people-roof", }, },
         { path: "manageOffice", detail: { label: "Manage Office", iconClass: "fa-regular fa-building", }, },
         { path: "counsellorDashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
+        { path: "partnerDashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
         { path: "addStudent", detail: { label: "Add Student", iconClass: "fa-solid fa-user-plus" }, },
         { path: "bulkStudentAdd", detail: { label: "Bulk Student Add", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "searchStudent", detail: { label: "Search Student", iconClass: "fa-solid fa-magnifying-glass", },},
@@ -195,6 +214,16 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         },
         {"name": "Manage Staff","id": "manageUsers","icons": "fa-solid fa-people-roof", "path":"manageUsers"},
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
+      ]
+    }
+    else if (sessionStorage.getItem("userRole") == "partner") {
+      self.navMenu = [
+        {"name": "Dashboard","id": "home","icons": "fa-solid fa-gauge", "path":"partnerDashboard"},
+        {"name": "Student", "id": "student", "icons": "oj-ux-ico-education", 
+          "children": [
+            {"name": "Add Student","id": "addStudent","icons": "fa-solid fa-user-plus", "path":"addStudent"},
+          ]
+        },
       ]
     }
     else{
@@ -393,6 +422,8 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         router.go({ path: "dashboard" });
       } else if (sessionStorage.getItem("userRole") == "manager") {
         router.go({ path: "managerDashboard" });
+      }else if (sessionStorage.getItem("userRole") == "partner") {
+        router.go({ path: "partnerDashboard" });
       } else {
         router.go({ path: "counsellorDashboard" });
       }

@@ -610,6 +610,7 @@ define(["knockout","jquery","appController", "ojs/ojarraydataprovider",
                     }
                     else {
                         var routes = args.parentRouter._routes;
+                        console.log(routes)
                         if(routes[10].path!="dashboard"){
                             location.reload();
                         }

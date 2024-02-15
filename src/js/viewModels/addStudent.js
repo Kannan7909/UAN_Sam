@@ -516,6 +516,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     keyAttributes: 'value'
                 });
 
+                self.partner = ko.observable();
+
+
                 self.offices = ko.observableArray([]);
                 self.getOffices = ()=>{
                     $.ajax({
@@ -671,6 +674,51 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.cancelListener = ()=> {
                     location.reload()
                 }
+
+                self.partnerFormSubmit = ()=>{
+                    const formValid = self._checkValidationGroup("formValidation"); 
+                    if (formValid) {
+                        if(self.emailError()=='' && self.phoneError()==''){
+                            let popup = document.getElementById("popup1");
+                            popup.open();
+                            
+                            if(self.userRole()=="partner"){
+                                self.office(sessionStorage.getItem("userOfficeId"));
+                                self.partner(sessionStorage.getItem("userId"));
+                            }
+                            $.ajax({
+                                url: BaseURL+"/addPartnerStudent",
+                                type: 'POST',
+                                data: JSON.stringify({
+                                    firstName : self.firstName(),
+                                    lastName : self.lastName(),
+                                    countryCode : self.countryCode(),
+                                    phone : self.phone(),
+                                    email : self.email(),
+                                    office : self.office(),
+                                    partner : self.partner(),
+                                    nationality : self.nationality(),
+                                    dob : self.dob(),
+                                    leadSource : self.marketingSource(),
+                                    studyAbroadDestination: self.studyAbroadDestination()
+                                }),
+                                dataType: 'json',
+                                timeout: sessionStorage.getItem("timeInetrval"),
+                                context: self,
+                                error: function (xhr, textStatus, errorThrown) {
+                                    console.log(textStatus);
+                                },
+                                success: function (data) {
+                                    let popup = document.getElementById("popup1");
+                                    popup.close();
+                                    let popup1 = document.getElementById("popup2");
+                                    popup1.open();
+                                }
+                            })
+                        }
+                    }
+                }
+
 
                 self.connected = function () {
                     if (sessionStorage.getItem("userName") == null) {
