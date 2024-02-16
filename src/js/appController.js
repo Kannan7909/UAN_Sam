@@ -73,6 +73,9 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "partnerProfile", detail: { label: "Partner Profile", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "partnerCommission", detail: { label: "Partner Commission", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "partnerReport", detail: { label: "Partner Report", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "searchPartnerStudent", detail: { label: "Search Student", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "partnerStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
+        { path: "partnerStudentProfile", detail: { label: "Student Profile", iconClass: "oj-ux-ico-bar-chart", }, },
       ];
     } else if (sessionStorage.getItem("userRole") == "manager") {
       var navData = [
@@ -107,6 +110,9 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "guideManageoffice", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "guideManageStaff", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "guideManageReport", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "searchPartnerStudent", detail: { label: "Search Student", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "partnerStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
+        { path: "partnerStudentProfile", detail: { label: "Student Profile", iconClass: "oj-ux-ico-bar-chart", }, },
       ];
     } else if (sessionStorage.getItem("userRole") == "partner") {
       var navData = [
@@ -117,10 +123,10 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "counsellorDashboard", detail: { label: "Counsellor Dashboard", iconClass: "fa-solid fa-gauge", }, },
         { path: "dashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
         { path: "addStudent", detail: { label: "Add Student", iconClass: "fa-solid fa-people-roof", }, },
-        { path: "help", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
-        { path: "guideManageStudents", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
-        { path: "guideManageoffice", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
-        { path: "guideManageStaff", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "searchPartnerStudent", detail: { label: "Search Student", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "studentProfile", detail: { label: "Student Profile", iconClass: "oj-ux-ico-bar-chart", }, },
+        { path: "partnerStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
+        { path: "partnerStudentProfile", detail: { label: "Student Profile", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "guideManageReport", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "finalChoiceReport", detail: { label: "Final Choice Report", iconClass: "fa-solid fa-people-roof", }, },        
       ];
@@ -148,6 +154,9 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "guideManageoffice", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "guideManageStaff", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "guideManageReport", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "searchPartnerStudent", detail: { label: "Search Student", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "partnerStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
+        { path: "partnerStudentProfile", detail: { label: "Student Profile", iconClass: "oj-ux-ico-bar-chart", }, },
       ];
     }
     
@@ -222,6 +231,8 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         {"name": "Student", "id": "student", "icons": "oj-ux-ico-education", 
           "children": [
             {"name": "Add Student","id": "addStudent","icons": "fa-solid fa-user-plus", "path":"addStudent"},
+            {"name": "Search Student","id": "searchPartnerStudent","icons": "fa-solid fa-user-plus", "path":"searchPartnerStudent"},
+            {"name": "Student Manager Report","id": "partnerStudentManagerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerStudentManagerReport"},
           ]
         },
       ]

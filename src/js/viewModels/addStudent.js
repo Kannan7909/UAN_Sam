@@ -684,7 +684,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             
                             if(self.userRole()=="partner"){
                                 self.office(sessionStorage.getItem("userOfficeId"));
-                                self.partner(sessionStorage.getItem("userId"));
+                                self.partner(sessionStorage.getItem("userPartnerId"));
                             }
                             $.ajax({
                                 url: BaseURL+"/addPartnerStudent",

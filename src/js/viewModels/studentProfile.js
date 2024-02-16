@@ -1200,6 +1200,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         success: function (data) {
                             if(data[0]!='No data found'){
                                 data = JSON.parse(data);
+                                console.log(data)
                                 self.firstName(data[0][3]);
                                 self.lastName(data[0][4]);
                                 self.countryCode(data[0][5])

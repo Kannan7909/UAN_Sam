@@ -79,7 +79,7 @@
                                 data="[[counselorList]]" value="{{consultant}}"></oj-select-single>
                         </oj-bind-if>
                         <oj-input-text id="marketingSource" label-hint="Marketing Source" required="true"  value="{{marketingSource}}"></oj-input-text>
-                        <oj-select-single id="select" label-hint="Select Partner" label-edge="inside"
+                        <oj-select-single id="selectPartner" label-hint="Select Partner" label-edge="inside" 
                             data="[[partnersDp]]" value="{{partner}}"></oj-select-single>
                     </oj-form-layout>
                     <div class="oj-flex oj-sm-justify-content-center">
@@ -175,8 +175,8 @@
                         <oj-input-text id="courseName" label-hint="Course name" required="true"  value="{{courseName}}"></oj-input-text>
                         <oj-input-date label-hint="Course end date" value="{{courseEndDate}}"></oj-input-date>
                         <oj-input-date label-hint="Date of application Sent" required="true" value="{{applicationSentDate}}"></oj-input-date>
-                        <oj-input-text id="partner" label-hint="Partner" value="{{partner}}"></oj-input-text>
-                        <oj-form-layout direction="row" columns="2">
+<!--                         <oj-input-text id="partner" label-hint="Partner" value="{{partner}}"></oj-input-text>
+ -->                        <oj-form-layout direction="row" columns="2">
                             <oj-select-single id="select" label-hint="Currency" label-edge="inside" class="oj-form-control-max-width-md"
                                 data="[[currenciesSet]]" value="{{tutionFeeCurrency}}"></oj-select-single>
                             <oj-input-number id="input-number-validator" value="{{tutionFee}}" label-hint="Tution fee"></oj-input-number>

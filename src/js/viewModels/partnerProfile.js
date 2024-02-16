@@ -807,7 +807,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         if(partnerId){
                             self.partnerId(partnerId);
                             sessionStorage.removeItem("partnerId")
-                            self.getOffices().then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getPartners()).then(()=>self.getPartnerNote()).catch(error => console.error(error))
+                            self.getOffices().then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getPartners()).then(()=>self.getPartnerContractFile()).then(()=>self.getPartnerNote()).then(()=>self.getPartnerInfo()).then(()=>self.getPartnerPassword()).catch(error => console.error(error))
                         }else{
                             self.getOffices();
                             self.getBdmCounselors();
@@ -1595,7 +1595,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 url: BaseURL+"/addUser",
                                 type: 'POST',
                                 data: JSON.stringify({
-                                    name : self.partnerEmail(),
+                                    name : self.partnerName(),
                                     office : self.processingOffice(),
                                     role : 'partner',
                                     email : self.partnerEmail(),
