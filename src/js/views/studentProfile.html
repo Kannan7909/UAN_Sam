@@ -436,7 +436,8 @@
             <oj-input-text id="coursenameEdit" label-hint="Course name" required="true" value="{{coursenameEdit}}"></oj-input-text>
             <oj-input-date value="{{courseEndDateEdit}}" label-hint="Course End Date" autocomplete="off"></oj-input-date>
             <oj-input-date value="{{applicationSentDateEdit}}" label-hint="Application Sent Date" autocomplete="off"></oj-input-date>
-            <oj-input-text id="partner" label-hint="Partner" value="{{partnerEdit}}"></oj-input-text>
+            <oj-select-single id="selectPartner" label-hint="Select Partner" label-edge="inside" 
+                data="[[partnersDp]]" value="{{partnerEdit}}"></oj-select-single>            
             <oj-form-layout direction="row" columns="2">
                 <oj-select-single id="select" label-hint="Currency" label-edge="inside" class="oj-form-control-max-width-md"
                     data="[[currenciesSet]]" value="{{tutionFeeCurrencyEdit}}"></oj-select-single>
