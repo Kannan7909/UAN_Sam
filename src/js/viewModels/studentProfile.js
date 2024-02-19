@@ -81,7 +81,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.partner = ko.observable()
                 self.partnersList = ko.observableArray()
-                self.partners = (officeId)=>{
+                self.partners = (officeId, partnerId)=>{
                     $.ajax({
                         url: BaseURL+"/getPartnerWithOfficeId",
                         type: 'POST',
@@ -100,6 +100,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 for(let i=0;i<len;i++){
                                     self.partnersList.push({value: `${data[i][0]}`, label: `${data[i][1]}`})
                                 }
+                                self.partner(partnerId)
                             }
                         }
                     })
@@ -1229,14 +1230,14 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.utmMedium(data[0][22]);
                                 self.utmCampaign(data[0][23]);
                                 self.hearAbout(data[0][24]);
-                                self.partner(data[0][25]);
+                                // self.partner();
                                 if(data[0][1]==null){
                                     self.getCounselors(data[0][2], "");
-                                    self.partners(data[0][2]);
+                                    self.partners(data[0][2], data[0][25]);
                                 }
                                 else{
                                     self.getCounselors(data[0][2], data[0][1]);
-                                    self.partners(data[0][2]);
+                                    self.partners(data[0][2], data[0][25]);
                                 }
                             }
                             else{
@@ -1319,7 +1320,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.officeChangeHandler = ()=>{
                     self.getCounselors(self.office1(), "")
-                    self.partners(self.office1())
+                    self.partners(self.office1(), "")
                 }
                 self.counselors = ko.observableArray([])
 
